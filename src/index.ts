@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 
 import { PokemonModel } from './schema/pokemon'; // Import the PokemonModel
+import getImageUrl from './utils/getPokemon';
 
 const app = express();
 const PORT = 3001;
@@ -15,7 +16,7 @@ app.get('/api/pokemons', async (_req, res) => {
       
       // Check if no Pokémon are found
       if (!pokemons || pokemons.length === 0) {
-        return res.json([]); // Return an empty array if no Pokémon are found
+        return res.status(204).send();
       }
   
       res.json(pokemons);
@@ -25,18 +26,28 @@ app.get('/api/pokemons', async (_req, res) => {
     }
   });
 
-app.post('/api/pokemons', async (req, res) => {
+  app.post('/api/pokemons', async (req, res) => {
     try {
       // Extract data from the request body
-      const { name, type } = req.body;
-      console.log(name, type)
+      let { name, type } = req.body;
   
-      // Create a new document using the MongoDB model
-      const newPokemon = new PokemonModel({ name, type });
+      // Check if a Pokemon with the same name already exists
+      const pokemonExists = await doesPokemonExist(name);
+  
+      if (pokemonExists) {
+        // Pokemon with the same name already exists, return an error response
+        return res.status(204).json({ error: 'Pokemon with the same name already exists' });
+      }
+  
+      // Continue with the code to fetch imageUrl and type
+      const data = await getImageUrl(name);
+      const imageUrl = data?.imageUrl ? data?.imageUrl : "";
+      type = data?.type ? data?.type : type;
+  
+      const newPokemon = new PokemonModel({ name, type, imageUrl });
   
       // Save the document to the database
-      await newPokemon.save();  
-      console.log(newPokemon)
+      await newPokemon.save();
   
       res.json(newPokemon);
     } catch (error) {
@@ -44,13 +55,27 @@ app.post('/api/pokemons', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-
-app.put('/api/pokemons/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name, type } = req.body;
-  const updatedPokemon = await PokemonModel.findByIdAndUpdate(id, { name, type }, { new: true });
-  res.json(updatedPokemon);
-});
+  
+  app.put('/api/pokemons/:id', async (req, res) => {
+    const { id } = req.params;
+    let { name, type } = req.body;
+  
+    // Check if a Pokemon with the same name already exists (excluding the current Pokemon being updated)
+    const pokemonExists = await doesPokemonExist(name);
+  
+    if (pokemonExists) {
+      // Pokemon with the same name already exists, return an error response
+      return res.status(204).json({ error: 'Pokemon with the same name already exists' });
+    }
+  
+    // Continue with the code to fetch imageUrl and type
+    const data = await getImageUrl(name);
+    const imageUrl = data?.imageUrl ? data?.imageUrl : "";
+    type = data?.type ? data?.type : type;
+  
+    const updatedPokemon = await PokemonModel.findByIdAndUpdate(id, { name, type, imageUrl }, { new: true });
+    res.json(updatedPokemon);
+  });
 
 app.delete('/api/pokemons/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -68,3 +93,8 @@ app.listen(PORT, async () => {
     //await closeMongoDBClient();
     process.exit();
   });
+
+  const doesPokemonExist = async (name: string) => {
+    const existingPokemon = await PokemonModel.findOne({ name });
+    return !!existingPokemon;
+  };

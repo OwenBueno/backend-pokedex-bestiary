@@ -30,7 +30,7 @@ const handlePokemonDetails = async (pokemons: Pokemon[], type: string): Promise<
 const getPokemonInfoDetails = async (pokemon: Pokemon, type: string): Promise<PokemonDetails> => {
   const data = await getPokemonInfo(pokemon.name, type);
   return {
-    name: pokemon.name || '',
+    name: data?.name || '',
     imageUrl: data?.imageUrl || '',
     type: data?.type || '',
     abilities: data?.abilities || '',
@@ -40,7 +40,7 @@ const getPokemonInfoDetails = async (pokemon: Pokemon, type: string): Promise<Po
 
 export const getPokedex = async (req: Request, res: Response) => {
   try {
-    let { limit, page, search } = req.query;
+    let { limit, page, search, pdf } = req.query;
     const ValueLimit = limit ? parseInt(limit as string, 10) : 18;
     const ValuePage = page ? parseInt(page as string, 10) : 1;
 
@@ -55,8 +55,9 @@ export const getPokedex = async (req: Request, res: Response) => {
         const startIndex = ValuePage;
         const endIndex = startIndex + ValueLimit;
         const paginatedPokemons = paginateResults(filteredPokemons, startIndex, endIndex);
-
-        if (paginatedPokemons.length !== ValueLimit) {
+      
+        if (paginatedPokemons.length !== ValueLimit && !pdf) {
+          console.log(!pdf)
           return res.status(204).send();
         }
 
@@ -68,7 +69,7 @@ export const getPokedex = async (req: Request, res: Response) => {
       }
     } else if (page) {
       pokemons = await pokemonClient.listPokemons(page, limit);
-      if (pokemons.results.length !== ValueLimit) {
+      if (pokemons.results.length !== ValueLimit && !pdf) {
         return res.status(204).send();
       }
     }

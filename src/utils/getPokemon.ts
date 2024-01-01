@@ -22,20 +22,21 @@ interface PokemonAbilities {
 }
 
 async function getPokemonInfo(name: string, type: string): Promise<PokemonData | null> {
-  const pokemon = name.toLowerCase();
+  let pokemon = name.toLowerCase().replace(/\s+/g, "-");
 
   try {
     const data = await pokemonClient.getPokemonByName(pokemon);
+    pokemon = pokemon.replace(/-/g, ' ');
     const imageUrl = data.sprites.front_default || "";
     const arrayTypes = data.types.map((obj: PokemonTypes) => obj.type.name);
     const typeString = arrayTypes.join(" - ");
     if(type === "pokedex"){
       let abilities = data.abilities.map((obj: PokemonAbilities) => obj.ability.name);
       abilities =abilities.join(" - ")
-      return { name: "",imageUrl, type: typeString, abilities, id: data.id };
+      return { name: pokemon, imageUrl, type: typeString, abilities, id: data.id };
     }
 
-    return { name: "", imageUrl, type: typeString, abilities: "", id: 0 };
+    return { name: pokemon, imageUrl, type: typeString, abilities: "", id: 0 };
   } catch (error) {
     //console.error(error);
     console.log("Pokemon not found")

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PokemonModel } from '../schema/pokemon';
-import getImageUrl from '../utils/getPokemon';
+import getPokemonInfo from '../utils/getPokemon';
 
 const doesPokemonExist = async (name: string) => {
   const existingPokemon = await PokemonModel.findOne({ name });
@@ -27,6 +27,7 @@ export const addPokemon = async (req: Request, res: Response) => {
   try {
     // Extract data from the request body
     let { name, type } = req.body;
+    name = (name as string).replace(/\s/g, '-');
 
     // Check if a Pokemon with the same name already exists
     const pokemonExists = await doesPokemonExist(name);
@@ -37,7 +38,7 @@ export const addPokemon = async (req: Request, res: Response) => {
     }
 
     // Continue with the code to fetch imageUrl and type
-    const data = await getImageUrl(name);
+    const data = await getPokemonInfo(name, "pokemon");
     const imageUrl = data?.imageUrl ? data?.imageUrl : '';
     type = data?.type ? data?.type : type;
 
@@ -57,7 +58,7 @@ export const updatePokemon = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     let { name, type } = req.body;
-
+    name = (name as string).replace(/\s/g, '-');
     // Check if a Pokemon with the same name already exists (excluding the current Pokemon being updated)
     const pokemonExists = await doesPokemonExist(name);
 
@@ -67,7 +68,7 @@ export const updatePokemon = async (req: Request, res: Response) => {
     }
 
     // Continue with the code to fetch imageUrl and type
-    const data = await getImageUrl(name);
+    const data = await getPokemonInfo(name, "pokemon");
     const imageUrl = data?.imageUrl ? data?.imageUrl : '';
     type = data?.type ? data?.type : type;
 

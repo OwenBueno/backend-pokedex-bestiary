@@ -6,6 +6,7 @@ import {
   updatePokemon,
   deletePokemon,
 } from './controller/pokemonController';
+import { getPokedex } from './controller/pokedexController';
 
 const app = express();
 const PORT = 3001;
@@ -18,6 +19,9 @@ app.get('/api/pokemons', getPokemons);
 app.post('/api/pokemons', addPokemon);
 app.put('/api/pokemons/:id', updatePokemon);
 app.delete('/api/pokemons/:id', deletePokemon);
+
+// Pokedex Limit Requests
+app.get('/api/pokedex', getPokedex)
 
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);

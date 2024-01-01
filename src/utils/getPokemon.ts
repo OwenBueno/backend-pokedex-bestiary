@@ -1,29 +1,46 @@
-import { PokemonClient } from 'pokenode-ts';
+import pokemonClient from '../objects/pokemonClient'
 
 interface PokemonData {
+  name: string; 
   imageUrl: string;
   type: string;
+  abilities: string;
+  id: number;
+}
+interface Info {
+  name: string;
+  url: string;
+}
+interface PokemonTypes {
+  slot: number,
+  type: Info
+}
+interface PokemonAbilities {
+  ability: Info,
+  is_hidden: boolean,
+  slot: number
 }
 
-async function getImageUrl(name: string): Promise<PokemonData | null> {
-  const api = new PokemonClient();
+async function getPokemonInfo(name: string, type: string): Promise<PokemonData | null> {
   const pokemon = name.toLowerCase();
 
   try {
-    const data = await api.getPokemonByName(pokemon);
-
+    const data = await pokemonClient.getPokemonByName(pokemon);
     const imageUrl = data.sprites.front_default || "";
-    const arrayTypes = data.types.map((type: any) => type.type.name);
-
+    const arrayTypes = data.types.map((obj: PokemonTypes) => obj.type.name);
     const typeString = arrayTypes.join(" - ");
+    if(type === "pokedex"){
+      let abilities = data.abilities.map((obj: PokemonAbilities) => obj.ability.name);
+      abilities =abilities.join(" - ")
+      return { name: "",imageUrl, type: typeString, abilities, id: data.id };
+    }
 
-    const result: PokemonData = { imageUrl, type: typeString };
-
-    return result;
+    return { name: "", imageUrl, type: typeString, abilities: "", id: 0 };
   } catch (error) {
-    console.error("Pokemon not Found");
+    //console.error(error);
+    console.log("Pokemon not found")
     return null;
   }
 }
 
-export default getImageUrl;
+export default getPokemonInfo;

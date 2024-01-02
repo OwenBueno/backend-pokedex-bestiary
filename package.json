@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./dist/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "pm2 start ./dist/index.js",
+    "restart": "pm2 restart ./dist/index.js",
+    "stop": "pm2 stop ./dist/index.js"
   },
   "keywords": [],
   "author": "",

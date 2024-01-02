@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import pokemonClient from '../objects/pokemonClient';
-import getPokemonInfo from '../utils/getPokemon';
+import { Request, Response } from "express";
+import pokemonClient from "../objects/pokemonClient";
+import getPokemonInfo from "../utils/getPokemon";
 
 interface Pokemon {
   name: string;
@@ -16,7 +16,7 @@ interface PokemonDetails {
 }
 
 // Function to fetch details for a list of pokemons
-const normalizeSearchTerm = (search: string): string => search.replace(/\s/g, '-');
+const normalizeSearchTerm = (search: string): string => search.replace(/\s/g, "-");
 
 const filterPokemonsByName = (allPokemons: Pokemon[], normalizedSearch: string): Pokemon[] =>
   allPokemons.filter((pokemon: Pokemon) => pokemon.name.toLowerCase().includes(normalizedSearch.toLowerCase()));
@@ -30,10 +30,10 @@ const handlePokemonDetails = async (pokemons: Pokemon[], type: string): Promise<
 const getPokemonInfoDetails = async (pokemon: Pokemon, type: string): Promise<PokemonDetails> => {
   const data = await getPokemonInfo(pokemon.name, type);
   return {
-    name: data?.name || '',
-    imageUrl: data?.imageUrl || '',
-    type: data?.type || '',
-    abilities: data?.abilities || '',
+    name: data?.name || "",
+    imageUrl: data?.imageUrl || "",
+    type: data?.type || "",
+    abilities: data?.abilities || "",
     id: data?.id || 0,
   };
 };
@@ -60,11 +60,11 @@ export const getPokedex = async (req: Request, res: Response) => {
           return res.status(204).send();
         }
 
-        const pokemonDetails = await handlePokemonDetails(paginatedPokemons, 'pokedex');
+        const pokemonDetails = await handlePokemonDetails(paginatedPokemons, "pokedex");
         return res.json({ results: pokemonDetails, count: filteredPokemons.length });
       } catch (error) {
-        console.error('Error fetching Pokémon data:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching Pokémon data:", error);
+        return res.status(500).json({ error: "Internal server error" });
       }
     } else if (page) {
       pokemons = await pokemonClient.listPokemons(page, limit);
@@ -73,10 +73,10 @@ export const getPokedex = async (req: Request, res: Response) => {
       }
     }
 
-    const pokemonDetails = await handlePokemonDetails(pokemons.results, 'pokedex');
+    const pokemonDetails = await handlePokemonDetails(pokemons.results, "pokedex");
     return res.json({ results: pokemonDetails, count: pokemons.count });
   } catch (error) {
-    console.error('Error fetching Pokémon data:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching Pokémon data:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

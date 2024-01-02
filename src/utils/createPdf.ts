@@ -1,10 +1,10 @@
-import { PDFDocument } from 'pdf-lib';
-import axios from 'axios';
-import fs from 'fs';
+import { PDFDocument } from "pdf-lib";
+import axios from "axios";
+import fs from "fs";
 
-import PokemonInfo from '../models/pokemonInfo';
+import PokemonInfo from "../models/pokemonInfo";
 
-const inputPdfPath = './media/pdf-input.pdf';
+const inputPdfPath = "./media/pdf-input.pdf";
 
 async function createPdf(pokemon: PokemonInfo) {
   // Load the existing PDF
@@ -16,7 +16,7 @@ async function createPdf(pokemon: PokemonInfo) {
 
   // Fetch image using axios
   const imageUrl = pokemon.imageUrl;
-  const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+  const imageResponse = await axios.get(imageUrl, { responseType: "arraybuffer" });
   const imageBytes = new Uint8Array(imageResponse.data);
 
   // Embed the image into the PDF

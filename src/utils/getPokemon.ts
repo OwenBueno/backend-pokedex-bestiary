@@ -1,5 +1,5 @@
-import pokemonClient from '../objects/pokemonClient';
-import PokemonInfo from '../models/pokemonInfo';
+import pokemonClient from "../objects/pokemonClient";
+import PokemonInfo from "../models/pokemonInfo";
 
 interface Info {
   name: string;
@@ -21,7 +21,7 @@ async function getPokemonInfo(name: string, type: string): Promise<PokemonInfo |
   try {
 
     const data = await pokemonClient.getPokemonByName(pokemon);
-    pokemon = pokemon.replace(/-/g, ' ');
+    pokemon = pokemon.replace(/-/g, " ");
     const imageUrl = data.sprites.front_default || "";
     const arrayTypes = data.types.map((obj: PokemonTypes) => obj.type.name);
     const typeString = arrayTypes.join(" - ");

@@ -1,5 +1,5 @@
-import { mongoose } from '../connection';
-import { Schema, Document, model } from 'mongoose';
+import { mongoose } from "../connection";
+import { Schema, Document, model } from "mongoose";
 
 interface Pokemon extends Document {
   name: string;
@@ -12,6 +12,6 @@ const pokemonSchema = new Schema<Pokemon>({
   type: String,
   imageUrl: String
 });
-const PokemonModel = mongoose.model<Pokemon>('pokemon', pokemonSchema);
+const PokemonModel = mongoose.model<Pokemon>("pokemon", pokemonSchema);
 
 export { PokemonModel };

@@ -57,7 +57,6 @@ export const getPokedex = async (req: Request, res: Response) => {
         const paginatedPokemons = paginateResults(filteredPokemons, startIndex, endIndex);
       
         if (paginatedPokemons.length !== ValueLimit && !pdf) {
-          console.log(!pdf)
           return res.status(204).send();
         }
 

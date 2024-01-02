@@ -1,12 +1,6 @@
-import pokemonClient from '../objects/pokemonClient'
+import pokemonClient from '../objects/pokemonClient';
+import PokemonInfo from '../models/pokemonInfo';
 
-interface PokemonData {
-  name: string; 
-  imageUrl: string;
-  type: string;
-  abilities: string;
-  id: number;
-}
 interface Info {
   name: string;
   url: string;
@@ -21,22 +15,53 @@ interface PokemonAbilities {
   slot: number
 }
 
-async function getPokemonInfo(name: string, type: string): Promise<PokemonData | null> {
+async function getPokemonInfo(name: string, type: string): Promise<PokemonInfo | null> {
   let pokemon = name.toLowerCase().replace(/\s+/g, "-");
 
   try {
+
     const data = await pokemonClient.getPokemonByName(pokemon);
     pokemon = pokemon.replace(/-/g, ' ');
     const imageUrl = data.sprites.front_default || "";
     const arrayTypes = data.types.map((obj: PokemonTypes) => obj.type.name);
     const typeString = arrayTypes.join(" - ");
-    if(type === "pokedex"){
+    if(type.includes("pokedex")){
       let abilities = data.abilities.map((obj: PokemonAbilities) => obj.ability.name);
       abilities =abilities.join(" - ")
-      return { name: pokemon, imageUrl, type: typeString, abilities, id: data.id };
+      if( type === "pokedexToPdf"){
+        return { 
+          id: data.id,
+          name: pokemon,
+          type: typeString, 
+          abilities, 
+          species: data.species.name,
+          height: data.height,
+          weight: data.weight,
+          imageUrl, 
+        };
+      }
+      return { 
+        id: data.id,
+        name: pokemon,
+        type: typeString, 
+        abilities, 
+        species: "",
+        height: 0,
+        weight: 0,
+        imageUrl, 
+      };
     }
 
-    return { name: pokemon, imageUrl, type: typeString, abilities: "", id: 0 };
+    return { 
+      id: 0,
+      name: pokemon,
+      type: typeString, 
+      abilities: "", 
+      species: "",
+      height: 0,
+      weight: 0,
+      imageUrl, 
+    };
   } catch (error) {
     //console.error(error);
     console.log("Pokemon not found")

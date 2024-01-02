@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
+import { config } from 'dotenv';
 
-const uri = "mongodb+srv://root:lMsH7pRIo5l5SPLE@cluster0.vtu4qa3.mongodb.net/bestiary?retryWrites=true&w=majority";
+config();
+
+const uri = process.env.URI ||"";
 
 let retries = 0;
 

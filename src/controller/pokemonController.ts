@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PokemonModel } from '../schema/pokemon';
+import { PokemonModel } from '../models/pokemon';
 import getPokemonInfo from '../utils/getPokemon';
 
 const doesPokemonExist = async (name: string) => {

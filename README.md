@@ -1,6 +1,6 @@
 # Bestiary
 
-A simple MERN project with the implementation of CRUD operations, MongoDB, Mongoose models, pagination, and PDF creation.
+The Bestiary Backend is a fundamental component of the MERN (MongoDB, Express.js, React, Node.js) project, responsible for handling CRUD operations, managing MongoDB with Mongoose models, implementing pagination, and enabling PDF creation. This backend component serves as the backbone, facilitating seamless communication between the frontend and the database, ensuring efficient data management, and enabling a robust user experience.
 
 ## Project Requirements
 
